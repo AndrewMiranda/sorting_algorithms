@@ -39,5 +39,7 @@ void method_quick_sort(int *array, size_t size, int left, int right);
 void swap(int *array, size_t size, int a, int b);
 int max_element(int *array, size_t size);
 int *max_length(int *array, unsigned int size);
+void quicksort_hoare(int *array, int lo, int hi, int size);
+int partition_hoare(int *array, int lo, int hi, int size);
 
 #endif
