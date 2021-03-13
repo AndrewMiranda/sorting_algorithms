@@ -1,74 +1,75 @@
 #include "sort.h"
 
+void swap(int *array, int *left, int *right, size_t size);
+void heapify(int *array, size_t start, size_t end, size_t size);
 /**
- * swaper - swaps position values
- * @array: array
- * @i: value to swap
- * @j: value to swap
- * @real_size: real size of the array
- * Return: void
+ * heap_sort - Sorts an array in ascending order
+ * @array: Array
+ * @size: Pointer to the previous element of the list
+ *
+ * Description: Sorts an array of integers in ascending
+ * order using the heap sort algorithm
+ * Return: Void
  */
-
-void swaper(int array[], int i, int j, size_t real_size)
+void heap_sort(int *array, size_t size)
 {
-	int holder = array[i];
+	int start, end;
 
-	if (array[i] == array[j])
+	if (!array || size < 2)
 		return;
-
-	array[i] = array[j];
-	array[j] = holder;
-	print_array(array, real_size);
-
-}
-
-/**
- * heapify - heapify the tree
- * @array: array
- * @size: size after recursion.
- * @i: value child
- * @real_size: real_size of the array
- * Return: void
- */
-
-void heapify(int array[], int  size, int i,  size_t real_size)
-{
-	int max = i;
-	int left = 2 * i  + 1;
-	int right = 2 * i + 2;
-
-	if (left < size  && array[left] > array[max])
-		max = left;
-	if (right < size && array[right] > array[max])
-		max = right;
-
-	if (max != i)
+	for (start = size / 2 - 1; start >= 0; start--)
+		heapify(array, (size_t) start, size, size);
+	for (end = size - 1; end >= 0; end--)
 	{
-		swaper(array, i, max, real_size);
-		heapify(array, size, max, real_size);
+		swap(array, &array[0], &array[end], size);
+		heapify(array, 0, (size_t) end, size);
+	}
+}
+/**
+ * heapify - Find largest among root, left child and right child
+ * @array: Array
+ * @start: Array start
+ * @end: Array end
+ * @size: Pointer to the previous element of the list
+ *
+ * Description: Find largest among root, left child and right child
+ * Return: Void
+ */
+void heapify(int *array, size_t start, size_t end, size_t size)
+{
+	int largest = start;
+	int left = 2 * start + 1;
+	int right = 2 * start + 2;
+
+	if (left < (int) end && array[left] > array[largest])
+		largest = left;
+	if (right < (int) end && array[right] > array[largest])
+		largest = right;
+	if (largest != (int) start)
+	{
+		swap(array, &array[start], &array[largest], size);
+		heapify(array, largest, end, size);
 	}
 }
 
 /**
- * heap_sort - heap sort algorithm
- * @array: array
- * @size: size of the array
- * Return: void
+ * swap - Swaps two int values
+ * @array: the integer array to sort
+ * @left: address of first value
+ * @right: address of second value
+ * @size: the size of the array
+ *
+ * Return: Void
  */
-
-void heap_sort(int *array, size_t size)
+void swap(int *array, int *left, int *right, size_t size)
 {
-	int i;
-	size_t real_size = size;
+	int temp;
 
-	if (!array || size < 2)
-		return;
-
-	for (i = size / 2 - 1; i >= 0; i--)
-		heapify(array, size, i, real_size);
-	for (i = size - 1; i >= 0; i--)
+	if (left != right)
 	{
-		swaper(array, 0, i, real_size);
-		heapify(array, i, 0, real_size);
+		temp = *left;
+		*left = *right;
+		*right = temp;
+		print_array(array, size);
 	}
 }
