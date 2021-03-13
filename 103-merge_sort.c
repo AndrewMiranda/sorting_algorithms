@@ -1,104 +1,93 @@
 #include "sort.h"
+/**
+ * top_down_merge  - top down merge
+ * @arrray: array
+ * @first: first value
+ * @middle: middle value
+ * @last: last value
+ * @copy_array: array copy
+ * Return: void
+ */
+
+void top_down_merge(int arrray[], int first, int middle,
+int last, int copy_array[])
+{
+	int i, j, k;
+
+	i = first;
+	j = middle;
+
+	if (arrray)
+	{
+		printf("Merging...\n");
+		printf("[left]: ");
+		print_array(arrray +  first, middle - first);
+		printf("[right]: ");
+		print_array(arrray + middle, last - middle);
+	}
+
+	for (k = first; k < last; k++)
+	{
+		if (i < middle && (j >= last || arrray[i] <= arrray[j]))
+		{
+			copy_array[k] = arrray[i];
+			i++;
+		}
+		else
+		{
+			copy_array[k] = arrray[j];
+			j++;
+		}
+
+	}
+	printf("[Done]: ");
+	print_array(copy_array + first, last - first);
+
+}
 
 /**
- * merge_sort - sorts array of integers in ascending order using
- * top-down merge sort algorithm
- * @array: list of integers
- * @size: size of array
+ * top_down_merge_split  - top down merge
+ * @copy_array: array copy
+ * @first: first value
+ * @last: last value
+ * @array: array
+ * Return: void
  */
-void merge_sort(int *array, size_t size)
+
+void top_down_merge_split(int *copy_array, int first, int last, int *array)
 {
-	int low;
-	int high;
-	int *temp;
+	int middle;
 
-	low = 0;
-	high = size - 1;
-
-	temp = malloc(sizeof(int) * size);
-	if (temp == NULL)
+	if (last - first < 2)
 		return;
 
-	sort(array, low, high, temp);
+	middle = (last + first) / 2;
 
-	free(temp);
+	top_down_merge_split(array, first, middle, copy_array);
+	top_down_merge_split(array, middle, last, copy_array);
+	top_down_merge(copy_array, first, middle, last, array);
+
 }
 
 /**
- * sort - splits array and sorts recursively
- * @array: list of integers
- * @low: first index of array
- * @high: last index of array
- * @temp: temp array for sorting values
+ * merge_sort  - merge sort algorithm
+ * @array: array
+ * @size: array size
+ * Return: void
  */
-void sort(int *array, int low, int high, int *temp)
+
+void merge_sort(int *array, size_t size)
 {
-	int mid;
+	int *copy_array;
+	unsigned int i;
 
-	if (low < high)
-	{
-		mid = (low + high) / 2;
-		sort(array, low, mid, temp);
-		sort(array, mid + 1, high, temp);
-		merge(array, low, mid, high, temp);
-	}
-}
+	copy_array = malloc(sizeof(int) * size);
+	if (!copy_array)
+		return;
 
-/**
- * merge - merges sorted arrays
- * @array: list of integers
- * @low: first index of array
- * @mid: middle of array
- * @high: last index of array
- * @temp: temp array for sorting values
- */
-void merge(int *array, int low, int mid, int high, int *temp)
-{
-	int left;
-	int right;
-	int i;
+	for (i = 0; i < size; i++)
+		copy_array[i] = array[i];
 
-	left = low;
-	right = mid + 1;
-
-	printf("Merging...\n");
-	printf("[left]: ");
-	print_array(&array[low], mid + 1);
-	printf("[right]: ");
-	print_array(&array[mid + 1], high - mid);
-
-	for (i = low; left <= mid && right <= high; i++)
-	{
-		if (array[left] <= array[right])
-			temp[i] = array[left++];
-		else
-			temp[i] = array[right++];
-	}
-
-	while (left <= mid)
-		temp[i++] = array[left++];
-
-	while (right <= high)
-		temp[i++] = array[right++];
-
-	for (i = 0; i <= high; i++)
-		array[i] = temp[i];
-
-	printf("[Done]: ");
-	print_array(temp, i);
-}
-
-/**
- * len - returns length of array
- * @array: array to evaluate
- * Return: length of array
- */
-int len(int *array)
-{
-	int i;
-
-	for (i = 0; array[i] != '\0'; i++)
-		;
-
-	return (i);
+	top_down_merge_split(copy_array, 0, size, array);
+	free(copy_array);
 }
